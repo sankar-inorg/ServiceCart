@@ -1,9 +1,13 @@
 package com.inorg.services.cart.controller;
 
 import com.commercetools.api.models.cart.Cart;
+import com.commercetools.api.models.order.Order;
+import com.inorg.services.cart.models.AddressRequest;
 import com.inorg.services.cart.models.CartRequest;
 import com.inorg.services.cart.models.CustomLineItemRequest;
 import com.inorg.services.cart.models.LineItemRequest;
+import com.inorg.services.cart.models.PaymentRequest;
+import com.inorg.services.cart.models.ShippingMethodRequest;
 import com.inorg.services.cart.service.CartService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +49,7 @@ public class CartController {
         return cartService.addCustomLineItem(customLineItemRequest, cartId);
     }
 
-    /*
+
     @PostMapping(value = "/{cartId}/shipping-address")
     public Cart addShippingAddress(@RequestBody(required = true) AddressRequest address, @PathVariable String cartId) {
         return cartService.addShippingAddress(address, cartId);
@@ -64,6 +68,6 @@ public class CartController {
     @PostMapping(value = "/{cartId}/place-order")
     public Order placeOrder(@PathVariable String cartId) {
         return cartService.placeOrder(cartId);
-    }*/
+    }
 
 }

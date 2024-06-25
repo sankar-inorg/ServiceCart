@@ -6,16 +6,33 @@ import com.commercetools.api.models.cart.CartAddCustomLineItemAction;
 import com.commercetools.api.models.cart.CartAddCustomLineItemActionBuilder;
 import com.commercetools.api.models.cart.CartAddLineItemAction;
 import com.commercetools.api.models.cart.CartAddLineItemActionBuilder;
+import com.commercetools.api.models.cart.CartAddPaymentAction;
+import com.commercetools.api.models.cart.CartAddPaymentActionBuilder;
 import com.commercetools.api.models.cart.CartDraft;
 import com.commercetools.api.models.cart.CartDraftBuilder;
 import com.commercetools.api.models.cart.CartOrigin;
+import com.commercetools.api.models.cart.CartResourceIdentifierBuilder;
+import com.commercetools.api.models.cart.CartSetShippingAddressAction;
+import com.commercetools.api.models.cart.CartSetShippingAddressActionBuilder;
+import com.commercetools.api.models.cart.CartSetShippingMethodAction;
+import com.commercetools.api.models.cart.CartSetShippingMethodActionBuilder;
 import com.commercetools.api.models.cart.CartUpdateAction;
 import com.commercetools.api.models.cart.CartUpdateBuilder;
 import com.commercetools.api.models.cart.InventoryMode;
 import com.commercetools.api.models.cart.TaxMode;
+import com.commercetools.api.models.common.BaseAddressBuilder;
 import com.commercetools.api.models.common.LocalizedStringBuilder;
 import com.commercetools.api.models.common.MoneyBuilder;
 import com.commercetools.api.models.order.Order;
+import com.commercetools.api.models.order.OrderFromCartDraftBuilder;
+import com.commercetools.api.models.payment.Payment;
+import com.commercetools.api.models.payment.PaymentDraft;
+import com.commercetools.api.models.payment.PaymentDraftBuilder;
+import com.commercetools.api.models.payment.PaymentMethodInfoBuilder;
+import com.commercetools.api.models.payment.PaymentResourceIdentifier;
+import com.commercetools.api.models.payment.PaymentResourceIdentifierBuilder;
+import com.commercetools.api.models.shipping_method.ShippingMethod;
+import com.commercetools.api.models.shipping_method.ShippingMethodResourceIdentifierBuilder;
 import com.inorg.services.cart.models.AddressRequest;
 import com.inorg.services.cart.models.CartRequest;
 import com.inorg.services.cart.models.CustomLineItemRequest;
@@ -57,7 +74,7 @@ public class CartServiceImpl implements CartService {
 
     }
 
-    Cart getCartById(String cartId) {
+    private Cart getCartById(String cartId) {
         return apiRoot.carts()
                 .withId(cartId)
                 .get()
@@ -107,25 +124,73 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart addShippingAddress(AddressRequest address, String cartId) {
-        //TODO: Implement this method
-        return null;
+        Cart cart = getCartById(cartId);
+        CartSetShippingAddressAction cartSetShippingAddressAction = CartSetShippingAddressActionBuilder.of()
+                .address(BaseAddressBuilder.of()
+                        .country(address.getCountry())
+                        .build())
+                .build();
+        return executeUpdateActions(cart, cartSetShippingAddressAction);
     }
 
     @Override
     public Cart addShippingMethod(ShippingMethodRequest shippingMethodRequest, String cartId) {
-        //TODO: Implement this method
-        return null;
+        Cart cart = getCartById(cartId);
+
+        CartSetShippingMethodAction cartSetShippingMethodAction = CartSetShippingMethodActionBuilder.of()
+                .shippingMethod(ShippingMethodResourceIdentifierBuilder.of()
+                        .key(shippingMethodRequest.getShippingMethod())
+                        .build())
+                .build();
+
+        return executeUpdateActions(cart, cartSetShippingMethodAction);
     }
 
     @Override
     public Cart addPayment(PaymentRequest paymentRequest, String cartId) {
-        //TODO: Implement this method
-        return null;
+        Cart cart = getCartById(cartId);
+
+        Payment payment = createPayment(paymentRequest);
+
+        CartAddPaymentAction cartAddPaymentAction = CartAddPaymentActionBuilder.of()
+                .payment(PaymentResourceIdentifierBuilder.of()
+                            .id(payment.getId())
+                            .build())
+                .build();
+
+        return executeUpdateActions(cart, cartAddPaymentAction);
+    }
+
+    private Payment createPayment(PaymentRequest paymentRequest) {
+        PaymentDraft paymentDraft = PaymentDraftBuilder.of()
+                .interfaceId(paymentRequest.getPaymentInterface())
+                .amountPlanned(MoneyBuilder.of().currencyCode("USD").centAmount(paymentRequest.getAmountInCents()).build())
+                .paymentMethodInfo(PaymentMethodInfoBuilder.of()
+                        .name(LocalizedStringBuilder.of().addValue("en-US", paymentRequest.getName()).build())
+                        .paymentInterface(paymentRequest.getPaymentInterface())
+                        .method("CREDIT_CARD")
+                        .build())
+                .build();
+        return apiRoot.payments()
+                .post(paymentDraft)
+                .executeBlocking()
+                .getBody();
     }
 
     @Override
     public Order placeOrder(String cartId) {
-        //TODO: Implement this method
-        return null;
+
+        Cart cart = getCartById(cartId);
+
+        return apiRoot.orders()
+                .post(OrderFromCartDraftBuilder.of()
+                        .cart(CartResourceIdentifierBuilder.of()
+                                .id(cartId)
+                                .build())
+                        .version(cart.getVersion())
+                        .build())
+                .executeBlocking()
+                .getBody();
+
     }
 }
