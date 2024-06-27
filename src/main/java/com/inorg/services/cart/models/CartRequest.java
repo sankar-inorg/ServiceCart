@@ -15,5 +15,4 @@ public class CartRequest {
     private String customerId;
     private String currency;
     private String country;
-    private String origin;
 }

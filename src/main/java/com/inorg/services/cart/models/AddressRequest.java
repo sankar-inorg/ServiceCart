@@ -12,15 +12,15 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddressRequest {
-    String email;
-    String firstName;
-    String lastName;
-    String phone;
-    String company;
-    String address1;
-    String address2;
-    String city;
-    String state;
-    String zip;
+//    String email;
+//    String firstName;
+//    String lastName;
+//    String phone;
+//    String company;
+//    String address1;
+//    String address2;
+//    String city;
+//    String state;
+//    String zip;
     String country;
 }
