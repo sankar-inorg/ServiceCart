@@ -29,9 +29,7 @@ import com.commercetools.api.models.payment.Payment;
 import com.commercetools.api.models.payment.PaymentDraft;
 import com.commercetools.api.models.payment.PaymentDraftBuilder;
 import com.commercetools.api.models.payment.PaymentMethodInfoBuilder;
-import com.commercetools.api.models.payment.PaymentResourceIdentifier;
 import com.commercetools.api.models.payment.PaymentResourceIdentifierBuilder;
-import com.commercetools.api.models.shipping_method.ShippingMethod;
 import com.commercetools.api.models.shipping_method.ShippingMethodResourceIdentifierBuilder;
 import com.inorg.services.cart.models.AddressRequest;
 import com.inorg.services.cart.models.CartRequest;
@@ -192,5 +190,25 @@ public class CartServiceImpl implements CartService {
                 .executeBlocking()
                 .getBody();
 
+    }
+
+    @Override
+    public Cart updateCartTaxMode(String cartId) {
+        return null;
+    }
+
+    @Override
+    public Cart applyCartDiscount(String discountCode, String cartId) {
+        return null;
+    }
+
+    @Override
+    public Order updateOrderNumber(String orderNumber, String orderId) {
+        return null;
+    }
+
+    @Override
+    public Order updateOrderLineItemQty(String lineItemId, Long quantity, String orderId) {
+        return null;
     }
 }

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -69,5 +70,17 @@ public class CartController {
     public Order placeOrder(@PathVariable String cartId) {
         return cartService.placeOrder(cartId);
     }
+
+    @PutMapping(value = "/{cartId}/tax-mode")
+    public Cart updateCart(@PathVariable String cartId) {
+        return cartService.updateCartTaxMode(cartId);
+    }
+
+
+    @PostMapping(value = "/{cartId}/apply-discount/{discountCode}")
+    public Cart updateShippingMethod(@PathVariable String discountCode, @PathVariable String cartId) {
+        return cartService.applyCartDiscount(discountCode, cartId);
+    }
+
 
 }
