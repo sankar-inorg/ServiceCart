@@ -8,6 +8,8 @@ import com.commercetools.api.models.cart.CartAddLineItemAction;
 import com.commercetools.api.models.cart.CartAddLineItemActionBuilder;
 import com.commercetools.api.models.cart.CartAddPaymentAction;
 import com.commercetools.api.models.cart.CartAddPaymentActionBuilder;
+import com.commercetools.api.models.cart.CartChangeTaxModeAction;
+import com.commercetools.api.models.cart.CartChangeTaxModeActionBuilder;
 import com.commercetools.api.models.cart.CartDraft;
 import com.commercetools.api.models.cart.CartDraftBuilder;
 import com.commercetools.api.models.cart.CartOrigin;
@@ -178,7 +180,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart updateCartTaxMode(String cartId) {
-        return null;
+        Cart cart = getCartById(cartId);
+        CartChangeTaxModeAction cartChangeTaxModeAction = CartChangeTaxModeActionBuilder.of()
+                .taxMode(TaxMode.PLATFORM)
+                .build();
+        return executeUpdateActions(cart, cartChangeTaxModeAction);
     }
 
     @Override
