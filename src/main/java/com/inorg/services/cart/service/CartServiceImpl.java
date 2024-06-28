@@ -52,25 +52,6 @@ public class CartServiceImpl implements CartService {
     public CartServiceImpl(ProjectApiRoot apiRoot) {
         this.apiRoot = apiRoot;
     }
-    @Override
-    public Cart createCart(CartRequest cartRequest) {
-
-        CartDraft cartDraft = CartDraftBuilder.of()
-                .locale("en-US")
-                .currency(cartRequest.getCurrency())
-                .country(cartRequest.getCountry())
-                .origin(CartOrigin.CUSTOMER)
-                .customerId(cartRequest.getCustomerId())
-                .taxMode(TaxMode.DISABLED)
-                .inventoryMode(InventoryMode.NONE)
-                .build();
-
-        return apiRoot.carts()
-                .post(cartDraft)
-                .executeBlocking()
-                .getBody();
-
-    }
 
     private Cart getCartById(String cartId) {
         return apiRoot.carts()
@@ -78,7 +59,6 @@ public class CartServiceImpl implements CartService {
                 .get()
                 .executeBlocking()
                 .getBody();
-
     }
 
     private Cart executeUpdateActions(Cart cart, CartUpdateAction cartUpdateAction) {
@@ -90,73 +70,6 @@ public class CartServiceImpl implements CartService {
                         .build())
                 .executeBlocking()
                 .getBody();
-    }
-
-    @Override
-    public Cart addLineItem(LineItemRequest lineItemRequest, String cartId) {
-
-        Cart cart = getCartById(cartId);
-        CartAddLineItemAction cartAddLineItemAction = CartAddLineItemActionBuilder.of()
-                .sku(lineItemRequest.getSku())
-                .quantity(lineItemRequest.getQuantity())
-                .build();
-
-        return executeUpdateActions(cart, cartAddLineItemAction);
-    }
-
-
-
-    @Override
-    public Cart addCustomLineItem(CustomLineItemRequest customLineItemRequest, String cartId) {
-        Cart cart = getCartById(cartId);
-
-        CartAddCustomLineItemAction cartAddCustomLineItemAction = CartAddCustomLineItemActionBuilder.of()
-                .name(LocalizedStringBuilder.of().addValue("en-US", customLineItemRequest.getName()).build())
-                .quantity(customLineItemRequest.getQuantity())
-                .money(MoneyBuilder.of().currencyCode("USD").centAmount(customLineItemRequest.getPriceInCents()).build())
-                .slug(customLineItemRequest.getName())
-                .build();
-
-        return executeUpdateActions(cart, cartAddCustomLineItemAction);
-    }
-
-    @Override
-    public Cart addShippingAddress(AddressRequest address, String cartId) {
-        Cart cart = getCartById(cartId);
-        CartSetShippingAddressAction cartSetShippingAddressAction = CartSetShippingAddressActionBuilder.of()
-                .address(BaseAddressBuilder.of()
-                        .country(address.getCountry())
-                        .build())
-                .build();
-        return executeUpdateActions(cart, cartSetShippingAddressAction);
-    }
-
-    @Override
-    public Cart addShippingMethod(ShippingMethodRequest shippingMethodRequest, String cartId) {
-        Cart cart = getCartById(cartId);
-
-        CartSetShippingMethodAction cartSetShippingMethodAction = CartSetShippingMethodActionBuilder.of()
-                .shippingMethod(ShippingMethodResourceIdentifierBuilder.of()
-                        .key(shippingMethodRequest.getShippingMethod())
-                        .build())
-                .build();
-
-        return executeUpdateActions(cart, cartSetShippingMethodAction);
-    }
-
-    @Override
-    public Cart addPayment(PaymentRequest paymentRequest, String cartId) {
-        Cart cart = getCartById(cartId);
-
-        Payment payment = createPayment(paymentRequest);
-
-        CartAddPaymentAction cartAddPaymentAction = CartAddPaymentActionBuilder.of()
-                .payment(PaymentResourceIdentifierBuilder.of()
-                            .id(payment.getId())
-                            .build())
-                .build();
-
-        return executeUpdateActions(cart, cartAddPaymentAction);
     }
 
     private Payment createPayment(PaymentRequest paymentRequest) {
@@ -176,10 +89,82 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public Order placeOrder(String cartId) {
+    public Cart createCart(CartRequest cartRequest) {
+        CartDraft cartDraft = CartDraftBuilder.of()
+                .locale("en-US")
+                .currency(cartRequest.getCurrency())
+                .country(cartRequest.getCountry())
+                .origin(CartOrigin.CUSTOMER)
+                .customerId(cartRequest.getCustomerId())
+                .taxMode(TaxMode.DISABLED)
+                .inventoryMode(InventoryMode.NONE)
+                .build();
 
+        return apiRoot.carts()
+                .post(cartDraft)
+                .executeBlocking()
+                .getBody();
+    }
+
+    @Override
+    public Cart addLineItem(LineItemRequest lineItemRequest, String cartId) {
         Cart cart = getCartById(cartId);
+        CartAddLineItemAction cartAddLineItemAction = CartAddLineItemActionBuilder.of()
+                .sku(lineItemRequest.getSku())
+                .quantity(lineItemRequest.getQuantity())
+                .build();
+        return executeUpdateActions(cart, cartAddLineItemAction);
+    }
 
+    @Override
+    public Cart addCustomLineItem(CustomLineItemRequest customLineItemRequest, String cartId) {
+        Cart cart = getCartById(cartId);
+        CartAddCustomLineItemAction cartAddCustomLineItemAction = CartAddCustomLineItemActionBuilder.of()
+                .name(LocalizedStringBuilder.of().addValue("en-US", customLineItemRequest.getName()).build())
+                .quantity(customLineItemRequest.getQuantity())
+                .money(MoneyBuilder.of().currencyCode("USD").centAmount(customLineItemRequest.getPriceInCents()).build())
+                .slug(customLineItemRequest.getName())
+                .build();
+        return executeUpdateActions(cart, cartAddCustomLineItemAction);
+    }
+
+    @Override
+    public Cart addShippingAddress(AddressRequest address, String cartId) {
+        Cart cart = getCartById(cartId);
+        CartSetShippingAddressAction cartSetShippingAddressAction = CartSetShippingAddressActionBuilder.of()
+                .address(BaseAddressBuilder.of()
+                        .country(address.getCountry())
+                        .build())
+                .build();
+        return executeUpdateActions(cart, cartSetShippingAddressAction);
+    }
+
+    @Override
+    public Cart addShippingMethod(ShippingMethodRequest shippingMethodRequest, String cartId) {
+        Cart cart = getCartById(cartId);
+        CartSetShippingMethodAction cartSetShippingMethodAction = CartSetShippingMethodActionBuilder.of()
+                .shippingMethod(ShippingMethodResourceIdentifierBuilder.of()
+                        .key(shippingMethodRequest.getShippingMethod())
+                        .build())
+                .build();
+        return executeUpdateActions(cart, cartSetShippingMethodAction);
+    }
+
+    @Override
+    public Cart addPayment(PaymentRequest paymentRequest, String cartId) {
+        Cart cart = getCartById(cartId);
+        Payment payment = createPayment(paymentRequest);
+        CartAddPaymentAction cartAddPaymentAction = CartAddPaymentActionBuilder.of()
+                .payment(PaymentResourceIdentifierBuilder.of()
+                        .id(payment.getId())
+                        .build())
+                .build();
+        return executeUpdateActions(cart, cartAddPaymentAction);
+    }
+
+    @Override
+    public Order placeOrder(String cartId) {
+        Cart cart = getCartById(cartId);
         return apiRoot.orders()
                 .post(OrderFromCartDraftBuilder.of()
                         .cart(CartResourceIdentifierBuilder.of()
@@ -189,7 +174,6 @@ public class CartServiceImpl implements CartService {
                         .build())
                 .executeBlocking()
                 .getBody();
-
     }
 
     @Override

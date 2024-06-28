@@ -10,7 +10,6 @@ import com.inorg.services.cart.models.PaymentRequest;
 import com.inorg.services.cart.models.ShippingMethodRequest;
 
 public interface CartService {
-
     Cart createCart(CartRequest cartRequest);
 
     Cart addLineItem(LineItemRequest lineItemRequest, String cartId);
@@ -28,7 +27,6 @@ public interface CartService {
     Cart updateCartTaxMode(String cartId);
 
     Cart applyCartDiscount(String discountCode, String cartId);
-
 
     Order updateOrderNumber(String orderNumber, String orderId);
 

@@ -13,8 +13,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShippingMethodRequest {
-
     @JsonProperty("shippingMethod")
     private String shippingMethod;
-
 }

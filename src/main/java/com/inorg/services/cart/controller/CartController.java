@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
@@ -34,13 +33,12 @@ public class CartController {
         this.cartService = cartService;
     }
 
-
     @PostMapping(value = "/new")
     public Cart createCart(@RequestBody(required = true) CartRequest cartRequest) {
         return cartService.createCart(cartRequest);
     }
 
-  @PostMapping(value = "/{cartId}/line-item")
+    @PostMapping(value = "/{cartId}/line-item")
     public Cart addLineItem(@RequestBody(required = true) LineItemRequest lineItemRequest, @PathVariable String cartId) {
         return cartService.addLineItem(lineItemRequest, cartId);
     }
@@ -49,7 +47,6 @@ public class CartController {
     public Cart addCustomLineItem(@RequestBody(required = true) CustomLineItemRequest customLineItemRequest, @PathVariable String cartId) {
         return cartService.addCustomLineItem(customLineItemRequest, cartId);
     }
-
 
     @PostMapping(value = "/{cartId}/shipping-address")
     public Cart addShippingAddress(@RequestBody(required = true) AddressRequest address, @PathVariable String cartId) {
@@ -76,11 +73,18 @@ public class CartController {
         return cartService.updateCartTaxMode(cartId);
     }
 
-
     @PostMapping(value = "/{cartId}/apply-discount/{discountCode}")
     public Cart updateShippingMethod(@PathVariable String discountCode, @PathVariable String cartId) {
         return cartService.applyCartDiscount(discountCode, cartId);
     }
 
-
 }
+
+/* Cart Service Flow:
+    - Create Cart
+    - Add Line Item
+    - Add Custom Line Item - Optional
+    - Add Shipping Address
+    - Add Shipping Method
+    - Add Payment
+    - Place Order */

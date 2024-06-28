@@ -1,7 +1,9 @@
 package com.inorg.services.cart.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,13 +17,14 @@ import lombok.Setter;
 @Builder
 public class PaymentRequest {
     @JsonProperty("name")
-    @NotNull String name;
+    @NotNull
+    String name;
 
     @JsonProperty("paymentInterface")
-    @NotNull String paymentInterface;
+    @NotNull
+    String paymentInterface;
 
     @JsonProperty("amount")
-    @NotNull Long amountInCents;
-
-
+    @NotNull
+    Long amountInCents;
 }
