@@ -3,7 +3,7 @@ package com.inorg.services.cart.controller;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.commercetools.api.models.order.Order;
-import com.inorg.services.cart.service.CartService;
+import com.inorg.services.cart.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.validation.annotation.Validated;
@@ -19,20 +19,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     private static final Logger LOG = LoggerFactory.getLogger(OrderController.class);
 
-    private final CartService cartService;
+    private final OrderService orderService;
 
-    public OrderController(CartService cartService) {
-        this.cartService = cartService;
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
     @PutMapping(value = "/{orderId}/order-number/{orderNumber}")
     public Order updateOrderNumber(@PathVariable String orderNumber, @PathVariable String orderId) {
-        return cartService.updateOrderNumber(orderNumber, orderId);
+        return orderService.updateOrderNumber(orderNumber, orderId);
     }
 
     @PutMapping(value = "/{orderId}/line-item/{lineItemId}")
     public Order updateOrderLineItemQty(@PathVariable String lineItemId, @PathVariable String orderId, @RequestParam Long quantity) {
-        return cartService.updateOrderLineItemQty(lineItemId, quantity, orderId);
+        return orderService.updateOrderLineItemQty(lineItemId, quantity, orderId);
     }
-
 }

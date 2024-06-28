@@ -197,13 +197,4 @@ public class CartServiceImpl implements CartService {
         return executeUpdateActions(cart, addDiscountCodeAction);
     }
 
-    @Override
-    public Order updateOrderNumber(String orderNumber, String orderId) {
-        return null;
-    }
-
-    @Override
-    public Order updateOrderLineItemQty(String lineItemId, Long quantity, String orderId) {
-        return null;
-    }
 }

@@ -27,8 +27,4 @@ public interface CartService {
     Cart updateCartTaxMode(String cartId);
 
     Cart applyCartDiscount(String discountCode, String cartId);
-
-    Order updateOrderNumber(String orderNumber, String orderId);
-
-    Order updateOrderLineItemQty(String lineItemId, Long quantity, String orderId);
 }
