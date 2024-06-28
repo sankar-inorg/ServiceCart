@@ -4,6 +4,8 @@ import com.commercetools.api.client.ProjectApiRoot;
 import com.commercetools.api.models.cart.Cart;
 import com.commercetools.api.models.cart.CartAddCustomLineItemAction;
 import com.commercetools.api.models.cart.CartAddCustomLineItemActionBuilder;
+import com.commercetools.api.models.cart.CartAddDiscountCodeAction;
+import com.commercetools.api.models.cart.CartAddDiscountCodeActionBuilder;
 import com.commercetools.api.models.cart.CartAddLineItemAction;
 import com.commercetools.api.models.cart.CartAddLineItemActionBuilder;
 import com.commercetools.api.models.cart.CartAddPaymentAction;
@@ -101,7 +103,6 @@ public class CartServiceImpl implements CartService {
                 .taxMode(TaxMode.DISABLED)
                 .inventoryMode(InventoryMode.NONE)
                 .build();
-
         return apiRoot.carts()
                 .post(cartDraft)
                 .executeBlocking()
@@ -189,7 +190,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart applyCartDiscount(String discountCode, String cartId) {
-        return null;
+        Cart cart = getCartById(cartId);
+        CartAddDiscountCodeAction addDiscountCodeAction = CartAddDiscountCodeActionBuilder.of()
+                .code(discountCode)
+                .build();
+        return executeUpdateActions(cart, addDiscountCodeAction);
     }
 
     @Override

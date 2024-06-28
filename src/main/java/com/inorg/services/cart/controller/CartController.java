@@ -2,6 +2,7 @@ package com.inorg.services.cart.controller;
 
 import com.commercetools.api.models.cart.Cart;
 import com.commercetools.api.models.order.Order;
+import com.inorg.services.cart.dto.CartDiscountDTO;
 import com.inorg.services.cart.models.AddressRequest;
 import com.inorg.services.cart.models.CartRequest;
 import com.inorg.services.cart.models.CustomLineItemRequest;
@@ -71,6 +72,11 @@ public class CartController {
     @PutMapping(value = "/{cartId}/tax-mode")
     public Cart updateCart(@PathVariable String cartId) {
         return cartService.updateCartTaxMode(cartId);
+    }
+
+    @PutMapping(value = "/{cartId}/tax-mode")
+    public Cart applyCartDiscount(@PathVariable String cartId, @RequestBody CartDiscountDTO cartDiscountDTO) {
+        return cartService.applyCartDiscount(cartDiscountDTO.getMyDiscountCode(), cartId);
     }
 
     @PostMapping(value = "/{cartId}/apply-discount/{discountCode}")
