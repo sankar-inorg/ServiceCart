@@ -56,8 +56,20 @@ public class CartController {
         return cartService.addPayment(paymentRequest, cartId);
     }
 
-    @PostMapping(value = "/{cartId}/place-order")
+    @GetMapping(value = "/{cartId}/place-order")
     public Order placeOrder(@PathVariable String cartId) {
         return cartService.placeOrder(cartId);
     }
+
+    @GetMapping(value = "/{cartId}/updatecarttaxmode")
+    public Cart UpdateCartTaxMode(@PathVariable String cartId) {
+        return cartService.updateCartTaxMode(cartId);
+    }
+
+    @GetMapping(value = "/{cartId}/applycartdiscount/{discountCode}")
+    public Cart AppyCartDiscount(@PathVariable String discountCode,@PathVariable String cartId) {
+        return cartService.applyCartDiscount(discountCode,cartId);
+    }
+
+
 }

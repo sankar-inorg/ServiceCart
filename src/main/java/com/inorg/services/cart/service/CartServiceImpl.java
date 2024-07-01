@@ -3,8 +3,8 @@ package com.inorg.services.cart.service;
 import com.commercetools.api.client.ProjectApiRoot;
 import com.commercetools.api.models.cart.*;
 import com.commercetools.api.models.common.*;
-import com.commercetools.api.models.order.Order;
-import com.commercetools.api.models.order.OrderFromCartDraftBuilder;
+import com.commercetools.api.models.order.*;
+import com.commercetools.api.models.order_edit.*;
 import com.commercetools.api.models.payment.*;
 import com.commercetools.api.models.shipping_method.ShippingMethodResourceIdentifier;
 import com.commercetools.api.models.shipping_method.ShippingMethodResourceIdentifierBuilder;
@@ -184,6 +184,94 @@ public class CartServiceImpl implements CartService {
                                 .build())
                         .version(cart.getVersion())
                         .build())
+                .executeBlocking()
+                .getBody();
+    }
+
+    @Override
+    public Cart updateCartTaxMode(String cartId) {
+        Cart cart = apiRoot.carts().withId(cartId).get().executeBlocking().getBody();
+
+        CartChangeTaxModeAction changeTaxModeAction = CartChangeTaxModeActionBuilder.of()
+                .taxMode(TaxMode.PLATFORM)
+                .build();
+
+        CartUpdate updates = CartUpdateBuilder.of()
+                .version(cart.getVersion())
+                .actions(List.of(changeTaxModeAction))
+                .build();
+
+        return apiRoot.carts()
+                .withId(cartId)
+                .post(updates)
+                .executeBlocking()
+                .getBody();
+    }
+
+    @Override
+    public Cart applyCartDiscount(String discountCode, String cartId) {
+        Cart cart = apiRoot.carts().withId(cartId).get().executeBlocking().getBody();
+
+        CartAddDiscountCodeAction cartAddDiscountCodeAction = CartAddDiscountCodeActionBuilder.of()
+                .code(discountCode)
+                .build();
+
+        CartUpdate updates = CartUpdateBuilder.of()
+                .version(cart.getVersion())
+                .actions(List.of(cartAddDiscountCodeAction))
+                .build();
+
+        return apiRoot.carts()
+                .withId(cartId)
+                .post(updates)
+                .executeBlocking()
+                .getBody();
+    }
+
+    @Override
+    public Order updateOrderNumber(String orderNumber, String orderId) {
+        Order order = apiRoot.orders().withId(orderId).get().executeBlocking().getBody();
+
+        OrderSetOrderNumberAction orderSetOrderNumberAction = OrderSetOrderNumberActionBuilder.of()
+                .orderNumber(orderNumber)
+                .build();
+
+        OrderUpdate updates = OrderUpdateBuilder.of()
+                .version(order.getVersion())
+                .actions(List.of(orderSetOrderNumberAction))
+                .build();
+
+        return apiRoot.orders()
+                .withId(orderId)
+                .post(updates)
+                .executeBlocking()
+                .getBody();
+    }
+
+    @Override
+    public Order updateOrderLineItemQty(String lineItemId, Long quantity, String orderId) {
+        Order order = apiRoot.orders().withId(orderId).get().executeBlocking().getBody();
+
+        StagedOrderChangeLineItemQuantityAction orderSetOrderNumberAction = StagedOrderChangeLineItemQuantityActionBuilder.of()
+                .lineItemId(lineItemId)
+                .quantity(quantity)
+                .build();
+
+        OrderEditAddStagedActionAction orderEditAddStagedActionAction = OrderEditAddStagedActionActionBuilder.of()
+                .stagedAction(orderSetOrderNumberAction)
+                .build();
+
+        OrderEditUpdateAction orderEditUpdateAction = OrderEditUpdateActionBuilder.of()
+                .addStagedActionBuilder().stagedAction()
+
+        OrderEditUpdate orderEditUpdate = OrderEditUpdateBuilder.of()
+                .version(1L)
+                .actions(orderEdit)
+                .build();
+
+        return apiRoot.orders().edits()
+                .withId(orderId)
+                .post(orderEdit)
                 .executeBlocking()
                 .getBody();
     }

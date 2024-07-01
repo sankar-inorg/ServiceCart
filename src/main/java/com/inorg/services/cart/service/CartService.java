@@ -24,4 +24,12 @@ public interface CartService {
     Cart addPayment(PaymentRequest paymentRequest, String cartId);
 
     Order placeOrder(String cartId);
+
+    Cart updateCartTaxMode(String cartId);
+
+    Cart applyCartDiscount(String discountCode, String cartId);
+
+    Order updateOrderNumber(String orderNumber, String orderId);
+
+    Order updateOrderLineItemQty(String lineItemId, Long quantity, String orderId);
 }
