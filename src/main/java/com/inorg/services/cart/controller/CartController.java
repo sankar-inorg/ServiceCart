@@ -71,5 +71,8 @@ public class CartController {
         return cartService.applyCartDiscount(discountCode,cartId);
     }
 
-
+    @GetMapping(value = "/{cartId}/addOrderNumber/{orderNumber}")
+    public Order AddOrderNumber(@PathVariable String cartId,@PathVariable String orderNumber) {
+        return cartService.updateOrderNumber(orderNumber,cartId);
+    }
 }
